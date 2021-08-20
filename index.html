@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monster Slayer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Monster Slayer Application</h1>
+    </header>
+    <div id="game">
+      <section id="monster" class="container">
+        <h2>Monster Health</h2>
+        <div class="healthbar">
+          <div class="healthbar__value" v-bind:style="monsterHPBarWidth"></div>
+        </div>
+      </section>
+      <section id="player" class="container">
+        <h2>Your Health</h2>
+        <div class="healthbar">
+          <div class="healthbar__value" v-bind:style="playerHPBarWidth"></div>
+        </div>
+      </section>
+      <section id="controls" v-if="!gameFinished">
+        <button v-on:click="playerAttack()">ATTACK</button>
+        <button v-bind:disabled="specialAttackCountdown" v-on:click="playerSpecialAttack()">SPECIAL ATTACK</button>
+        <button v-bind:disabled="healCountdown" v-on:click="playerHeal()">HEAL</button>
+        <button v-on:click="playerSurrender()">SURRENDER</button>
+      </section>
+      <section id="reset" v-if="gameFinished">
+        <button v-on:click="resetGame()">RESET</button>
+      </section>
+      <section id="log" class="container">
+        <h2>Battle Log</h2>
+        <ul>
+          <li 
+            v-for="(log, index) in battleLog" 
+            key="index"
+          >
+            <!-- In case of healing -->
+            <div v-if="log.actionType === 'heal'">
+              <span v-bind:class="log.actorClass">{{ log.actor }}</span>
+              healed 
+              <span v-bind:class="log.actionClass">{{ log.actionValue }}</span>
+              health points
+            </div>
+            <!-- In case of damage -->
+            <div v-else>
+              <span v-bind:class="log.actorClass">{{ log.actor }}</span>
+              inflicted
+              <span v-bind:class="log.actionClass">{{ log.actionValue }}</span>
+              damage points to
+              <span v-if="log.actor === 'Monster'" v-bind:class="logPlayerColor"> Player</span>
+              <span v-else v-bind:class="logMonsterColor"> Monster</span>
+            </div>
+          </li>
+          <li v-if="gameFinished">
+            <span v-if="monsterHP === 0 && playerHP !== 0" v-bind:class="logPlayerColor">Player won the battle!</span>
+            <span v-else v-bind:class="logMonsterColor">Monster won the battle!</span>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
